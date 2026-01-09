@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Professional Email Verification System</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+        .header { background: #2c3e50; color: white; padding: 20px; text-align: center; margin-bottom: 30px; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .btn { background: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        .btn:hover { background: #2980b9; }
+        .btn-success { background: #27ae60; }
+        .btn-danger { background: #e74c3c; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .hidden { display: none; }
+        .success { color: #27ae60; font-weight: bold; }
+        .error { color: #e74c3c; font-weight: bold; }
+        .license-key { background: #f8f9fa; padding: 10px; border: 1px solid #ddd; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Professional Email Verification System</h1>
+        <p>Licensed email verification and campaign management</p>
+    </div>
+
+    <div class="container">
+        <!-- Registration Section -->
+        <div class="card" id="registerSection">
+            <h2>Register for License Key</h2>
+            <form id="registerForm">
+                <div class="form-group">
+                    <label>Your Email:</label>
+                    <input type="email" id="registerEmail" required>
+                </div>
+                <button type="submit" class="btn btn-success">Get License Key</button>
+            </form>
+            <div id="registerResult"></div>
+        </div>
+
+        <!-- Activation Section -->
+        <div class="card" id="activationSection">
+            <h2>Activate License</h2>
+            <form id="activateForm">
+                <div class="form-group">
+                    <label>License Key:</label>
+                    <input type="text" id="licenseKey" placeholder="Enter your license key" required>
+                </div>
+                <button type="submit" class="btn btn-success">Activate License</button>
+            </form>
+            <div id="activateResult"></div>
+        </div>
+
+        <!-- Main System (Hidden until activated) -->
+        <div class="card hidden" id="mainSystem">
+            <h2>Email Verification & Sending System</h2>
+            
+            <!-- User Stats -->
+            <div id="userStats" class="card">
+                <h3>Your Account</h3>
+                <div id="statsContent"></div>
+            </div>
+
+            <!-- Email Verification -->
+            <div class="card">
+                <h3>Verify Emails</h3>
+                <form id="verifyForm">
+                    <div class="form-group">
+                        <label>Email List (one per line):</label>
+                        <textarea id="emailList" rows="10" placeholder="email1@example.com&#10;email2@example.com&#10;email3@example.com"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Verify Emails</button>
+                </form>
+                <div id="verifyResults"></div>
+            </div>
+
+            <!-- Campaign Sending -->
+            <div class="card">
+                <h3>Send Campaign</h3>
+                <form id="campaignForm">
+                    <div class="form-group">
+                        <label>Batch ID (from verification):</label>
+                        <input type="number" id="batchId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Subject:</label>
+                        <input type="text" id="campaignSubject" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Message:</label>
+                        <textarea id="campaignContent" rows="8" required></textarea>
+                    </div>
+                    
+                    <h4>SMTP Settings (Optional - uses default if empty)</h4>
+                    <div class="form-group">
+                        <label>SMTP Server:</label>
+                        <input type="text" id="smtpServer" placeholder="smtp.gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP Port:</label>
+                        <input type="number" id="smtpPort" placeholder="587">
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP Username:</label>
+                        <input type="email" id="smtpUsername" placeholder="your-email@gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label>SMTP Password:</label>
+                        <input type="password" id="smtpPassword" placeholder="your-app-password">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-success">Send Campaign</button>
+                </form>
+                <div id="campaignResults"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8002';
+        let currentLicenseKey = '';
+
+        // Registration
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('registerEmail').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('registerResult').innerHTML = 
+                        `<p class="success">${result.message}</p>`;
+                } else {
+                    document.getElementById('registerResult').innerHTML = 
+                        `<p class="error">${result.detail}</p>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('registerResult').innerHTML = 
+                    `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Activation
+        document.getElementById('activateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const licenseKey = document.getElementById('licenseKey').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}/activate`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ license_key: licenseKey })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    currentLicenseKey = licenseKey;
+                    document.getElementById('activateResult').innerHTML = 
+                        `<p class="success">${result.message}</p>`;
+                    
+                    // Show main system
+                    document.getElementById('mainSystem').classList.remove('hidden');
+                    loadUserStats();
+                } else {
+                    document.getElementById('activateResult').innerHTML = 
+                        `<p class="error">${result.detail}</p>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('activateResult').innerHTML = 
+                    `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Load user stats
+        async function loadUserStats() {
+            try {
+                const response = await fetch(`${API_BASE}/user-stats?license_key=${currentLicenseKey}`);
+                const stats = await response.json();
+                
+                document.getElementById('statsContent').innerHTML = `
+                    <p><strong>Email:</strong> ${stats.user_email}</p>
+                    <p><strong>Status:</strong> ${stats.license_status}</p>
+                    <p><strong>Expires:</strong> ${new Date(stats.expires_at).toLocaleDateString()}</p>
+                    <p><strong>Total Batches:</strong> ${stats.total_batches}</p>
+                    <p><strong>Total Verified Emails:</strong> ${stats.total_verified_emails}</p>
+                `;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Email verification
+        document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const emailList = document.getElementById('emailList').value
+                .split('\n')
+                .map(email => email.trim())
+                .filter(email => email);
+            
+            try {
+                const response = await fetch(`${API_BASE}/verify-emails?license_key=${currentLicenseKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ emails: emailList })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('verifyResults').innerHTML = `
+                        <h4>Verification Results:</h4>
+                        <p><strong>Batch ID:</strong> ${result.batch_id}</p>
+                        <p><strong>Total Emails:</strong> ${result.total_emails}</p>
+                        <p><strong>Valid Emails:</strong> ${result.verified_emails}</p>
+                        <div class="license-key">
+                            ${result.valid_emails.map(email => 
+                                `${email.email} - ${email.status}`
+                            ).join('<br>')}
+                        </div>
+                    `;
+                    
+                    // Auto-fill batch ID
+                    document.getElementById('batchId').value = result.batch_id;
+                    
+                    loadUserStats();
+                } else {
+                    document.getElementById('verifyResults').innerHTML = 
+                        `<p class="error">${result.detail}</p>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('verifyResults').innerHTML = 
+                    `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+
+        // Campaign sending
+        document.getElementById('campaignForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const campaignData = {
+                batch_id: parseInt(document.getElementById('batchId').value),
+                subject: document.getElementById('campaignSubject').value,
+                content: document.getElementById('campaignContent').value,
+                smtp_server: document.getElementById('smtpServer').value || null,
+                smtp_port: parseInt(document.getElementById('smtpPort').value) || null,
+                smtp_username: document.getElementById('smtpUsername').value || null,
+                smtp_password: document.getElementById('smtpPassword').value || null
+            };
+            
+            try {
+                const response = await fetch(`${API_BASE}/send-campaign?license_key=${currentLicenseKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(campaignData)
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    document.getElementById('campaignResults').innerHTML = `
+                        <h4>Campaign Results:</h4>
+                        <p class="success">${result.message}</p>
+                        <p><strong>Total Recipients:</strong> ${result.total_recipients}</p>
+                        <p><strong>Sent Successfully:</strong> ${result.sent_count}</p>
+                        <p><strong>Success Rate:</strong> ${result.success_rate}</p>
+                    `;
+                } else {
+                    document.getElementById('campaignResults').innerHTML = 
+                        `<p class="error">${result.detail}</p>`;
+                }
+                
+            } catch (error) {
+                document.getElementById('campaignResults').innerHTML = 
+                    `<p class="error">Error: ${error.message}</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+  "completed_searches": [
+    {
+      "key": "bank _kenya",
+      "query": "bank ",
+      "location": "kenya",
+      "results_count": 0,
+      "completed_at": "2026-01-09T16:45:56.720796"
+    },
+    {
+      "key": "veternary_kenya",
+      "query": "veternary",
+      "location": "kenya",
+      "results_count": 0,
+      "completed_at": "2026-01-09T16:46:23.168137"
+    },
+    {
+      "key": "financial advisor_new york",
+      "query": "financial advisor",
+      "location": "New York",
+      "results_count": 0,
+      "completed_at": "2026-01-09T16:46:33.033669"
+    },
+    {
+      "key": "financial advisor_london",
+      "query": "financial advisor",
+      "location": "London",
+      "results_count": 0,
+      "completed_at": "2026-01-09T16:46:34.927905"
+    },
+    {
+      "key": "financial advisor_tokyo",
+      "query": "financial advisor",
+      "location": "Tokyo",
+      "results_count": 0,
+      "completed_at": "2026-01-09T16:46:36.764090"
+    },
+    {
+      "key": "financial advisor_singapore",
+      "query": "financial advisor",
+      "location": "Singapore",
+      "results_count": 0,
+      "completed_at": "2026-01-09T16:46:38.378987"
+    },
+    {
+      "key": "financial advisor_hong kong",
+      "query": "financial advisor",
+      "location": "Hong Kong",
+      "results_count": 0,
+      "completed_at": "2026-01-09T16:46:40.077806"
+    }
+  ],
+  "failed_searches": [],
+  "last_updated": "2026-01-09T16:46:40.077806"
+}

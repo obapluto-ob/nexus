@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification System</title>
+    <style>
+        /* Copy all CSS from webapp.py here */
+    </style>
+</head>
+<body>
+    <!-- Copy all HTML from webapp.py here -->
+    
+    <script>
+        const API_BASE = 'https://your-backend.onrender.com'; // Update this
+        
+        // Keep backend alive
+        setInterval(() => {
+            fetch(`${API_BASE}/ping`).catch(() => {});
+        }, 14 * 60 * 1000); // Ping every 14 minutes
+        
+        // Copy all JavaScript from webapp.py here
+    </script>
+</body>
+</html>
