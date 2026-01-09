@@ -1548,6 +1548,22 @@
             btn.disabled = false;
             btn.textContent = btn.textContent.includes('CSV') ? 'Download CSV' : (btn.textContent.includes('Valid') ? 'Download Valid PDF' : 'Download All PDF');
         }
+        
+        // Create floating particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        
+        // Initialize particles on load
+        window.addEventListener('load', createParticles);
     </script>
 </body>
 </html>
