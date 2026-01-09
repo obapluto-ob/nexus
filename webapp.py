@@ -9,7 +9,6 @@ from datetime import datetime, timedelta
 import secrets
 import smtplib
 from email.mime.text import MIMEText
-import pandas as pd
 import PyPDF2
 import io
 import re
@@ -2351,22 +2350,27 @@ async def extract_emails_from_file(file: UploadFile) -> List[str]:
                     print(f"Fallback failed: {e2}")
                     
         elif file.filename.endswith(('.csv', '.xlsx', '.xls')):
-            # Extract from CSV/Excel
+            # Extract from CSV/Excel without pandas
             try:
                 if file.filename.endswith('.csv'):
-                    df = pd.read_csv(io.BytesIO(content))
+                    # Simple CSV parsing
+                    text = content.decode('utf-8', errors='ignore')
+                    lines = text.split('\n')
+                    for line in lines:
+                        if '@' in line:
+                            found_emails = re.findall(r'\S+@\S+\.\S+', line)
+                            emails.extend(found_emails)
                 else:
-                    df = pd.read_excel(io.BytesIO(content))
-                
-                print(f"Excel/CSV columns: {list(df.columns)}")
-                
-                # Look for email columns
-                for col in df.columns:
-                    if 'email' in col.lower() or df[col].astype(str).str.contains('@').any():
-                        column_emails = df[col].dropna().astype(str).tolist()
-                        for email in column_emails:
-                            if re.match(r'\S+@\S+\.\S+', email):
-                                emails.append(email)
+                    # Excel parsing with openpyxl
+                    from openpyxl import load_workbook
+                    wb = load_workbook(io.BytesIO(content))
+                    ws = wb.active
+                    
+                    for row in ws.iter_rows(values_only=True):
+                        for cell in row:
+                            if cell and '@' in str(cell):
+                                if re.match(r'\S+@\S+\.\S+', str(cell)):
+                                    emails.append(str(cell))
                                 
                 print(f"Emails from Excel/CSV: {emails}")
             except Exception as e:
