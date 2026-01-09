@@ -1436,6 +1436,10 @@
             document.getElementById(elementId).innerHTML = `<div class="error">${message}</div>`;
         }
 
+        function showError(elementId, message) {
+            document.getElementById(elementId).innerHTML = `<div class="error">${message}</div>`;
+        }
+
         async function loadUserStats() {
             try {
                 const response = await fetch(`${API_BASE}/user-stats?license_key=${currentLicenseKey}`);
